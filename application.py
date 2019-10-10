@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -23,24 +23,72 @@ db = scoped_session(sessionmaker(bind=engine))
 
 
 @app.route("/")
-def index():
-    return "Project 1: TODO"
+def welcome():
+    return "Welcome. Placeholder for registration/login."
 
-@app.route("/register", methods=["GET"])
+@app.route("/main_page")
+def main_page():
+    if not session.get('logged_in'):
+        return render_template("error.html", message="You need to log in to access this page.")
+
+    username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchall()[0]["username"]
+    return render_template("main_page.html", username=username)
+
+# -----------------REGISTRATION-----------------
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
 
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html")
 
-@app.route("/register", methods=["POST"])
-def hello():
-    username = request.form.get("username") # take the request the user made, access the form,
-                                    # and store the field called `name` in a Python variable also called `name`
-    password = request.form.get("password")
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-    # if db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount != 0:
+        # Make sure if the username do not exist
+        if db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).rowcount != 0:
+            return render_template("error.html", message="User with this username already exists.")
 
-    db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
-                    {"username": username, "password": password})
-    db.commit()
+        # Make sure username is not empty
+        if not username:
+            return render_template("error.html", message="Username cannot be empty.")
 
-    return render_template("hello.html", username=username, password=password)
+        # Make sure password is not empty
+        if not password:
+            return render_template("error.html", message="Password cannot be empty.")
+
+        # Create username
+        db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
+                        {"username": username, "password": password})
+        db.commit()
+
+        return render_template("hello.html", username=username, password=password)
+
+# -----------------LOGIN-----------------
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "GET":
+        return render_template("login.html")
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
+                        {"username": username, "password": password}).rowcount != 1:
+            return render_template("error.html", message="Your credentials are incorrect. Please try again.")
+        # Log in
+        session['logged_in'] = True
+        session['user_id'] = int(db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchall()[0]["id"])
+        return redirect(url_for('main_page'))
+
+# -----------------LOGOUT-----------------
+
+@app.route("/logout")
+def logout():
+    session['logged_in'] = False
+    session['user_id'] = None
+    return "You were just loged out."
