@@ -7,7 +7,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 app = Flask(__name__)
 
-
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
@@ -26,13 +25,35 @@ db = scoped_session(sessionmaker(bind=engine))
 def welcome():
     return "Welcome. Placeholder for registration/login."
 
-@app.route("/main_page")
+@app.route("/main_page", methods=["GET", "POST"])
 def main_page():
-    if not session.get('logged_in'):
-        return render_template("error.html", message="You need to log in to access this page.")
 
-    username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchall()[0]["username"]
-    return render_template("main_page.html", username=username)
+    if request.method == "GET":
+
+        if not session.get('logged_in'):
+            return render_template("error.html", message="You need to log in to access this page.")
+
+        username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchall()[0]["username"]
+        return render_template("main_page.html", username=username)
+
+    if request.method == "POST":
+
+        isbn = request.form.get("isbn")
+        title = request.form.get("title")
+        author = request.form.get("author")
+
+        # Partly matching
+        isbn = "%"+isbn+"%"
+        title = "%"+title+"%"
+        author = "%"+author+"%"
+
+        # Check if there is at least one search result
+        if db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", {"isbn": isbn}).rowcount == 0:
+            return render_template("error.html", message="There is no book that matches your search.")
+
+        # Select all search results
+        results = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", {"isbn": isbn}).fetchall()
+        return render_template("search_results.html", results=results)
 
 # -----------------REGISTRATION-----------------
 
