@@ -1,15 +1,25 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>My Website!</title>
-    </head>
-    <body>
-      Welcome back, please log in.
-      <form action="" method="post">
-        <input type="text" name="username" placeholder="Enter Your Name">
-        <input type="password" name="password" placeholder="Enter Your Password">
-        <button>Submit</button>
-      </form>
+{% extends "layout.html" %}
 
-    </body>
-</html>
+{% block heading %}
+
+    Welcome to the book review website!
+
+{% endblock %}
+
+
+{% block body %}
+
+  Please log in or register to be able to search books, see books' detalis and leave your reviews.
+
+<div class="wrapper">
+  <form class="form-signin" action="" method="post">
+    <h2 class="form-signin-heading">Please log in</h2>
+    <input type="text" class="form-control" name="username" placeholder="Enter Your Name" autofocus="" />
+    <input type="password" class="form-control" name="password" placeholder="Enter Your Password"/>
+    <button class="btn btn-lg btn-warning btn-block" type="submit">Login</button>
+    <p>Not a logged user yet? Register here:</p>
+    <a href="{{ url_for('register') }}" class="btn btn-lg btn-secondary btn-block" role="button">Register</a>
+  </form>
+</div>
+
+{% endblock %}

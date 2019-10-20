@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+
+  <p>Welcome {{username}}!</p>
+
+{% endblock %}
+
+
+{% block body %}
+
+  <form action="" method="post">
+    <input type="text" name="isbn" placeholder="ISBN">
+    <input type="text" name="title" placeholder="Title">
+    <input type="text" name="author" placeholder="Author">
+    <button>Search</button>
+  </form>
+
+{% endblock %}

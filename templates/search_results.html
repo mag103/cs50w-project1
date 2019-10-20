@@ -1,17 +1,20 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>My Website!</title>
-    </head>
-    <body>
-      <p>Search results:</p>
-      <ul>
-        {% for result in results %}
-          <li>
-            {{result}}
-          </li>
-        {% endfor %}
-      </ul>
+{% extends "layout.html" %}
 
-    </body>
-</html>
+{% block heading %}
+
+    <p>Search results:</p>
+
+{% endblock %}
+
+
+{% block body %}
+
+  <ul>
+    {% for result in results %}
+      <li>
+        {{result}}
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}

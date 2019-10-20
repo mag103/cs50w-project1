@@ -1,11 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>My Website!</title>
-    </head>
-    <body>
+{% extends "layout.html" %}
 
-      {{message}}
+{% block heading %}
 
-    </body>
-</html>
+    {{title}}
+
+{% endblock %}
+
+
+{% block body %}
+
+  <p>{{message}}</p>
+
+{% endblock %}

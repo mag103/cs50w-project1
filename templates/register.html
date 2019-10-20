@@ -1,15 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>My Website!</title>
-    </head>
-    <body>
-      Hello
-      <form action="" method="post">
-        <input type="text" name="username" placeholder="Enter Your Name">
-        <input type="password" name="password" placeholder="Set Your Password">
-        <button>Submit</button>
-      </form>
+{% extends "layout.html" %}
 
-    </body>
-</html>
+{% block heading %}
+
+    Hello
+
+{% endblock %}
+
+
+{% block body %}
+
+  <div class="wrapper">
+    <form class="form-signin" action="" method="post">
+      <h2 class="form-signin-heading">Register</h2>
+      <input type="text" class="form-control" name="username" placeholder="Enter Your Name" autofocus="" />
+      <input type="password" class="form-control" name="password" placeholder="Set Your Password"/>
+      <button class="btn btn-lg btn-warning btn-block" type="submit">Register</button>
+    </form>
+  </div>
+
+{% endblock %}

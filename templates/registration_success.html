@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+
+    First Page
+
+{% endblock %}
+
+
+{% block body %}
+
+  <p>Hello {{username}}</p>
+  <p>Your passoword is {{password}}</p>
+
+  <p>You can now log in to the book review website!</p>
+
+  <p><a href="{{ url_for('login') }}" class="btn btn-warning" role="button">Go to log in</a></p>
+
+{% endblock %}

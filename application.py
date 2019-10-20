@@ -21,12 +21,36 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
-def welcome():
-    return "Welcome. Placeholder for registration/login."
+# @app.route("/")
+# def welcome():
+#     return render_template("welcome.html", message="Welcome. Placeholder for registration/login.")
 
-@app.route("/main_page", methods=["GET", "POST"])
-def main_page():
+# -----------------LOGIN-----------------
+
+@app.route("/", methods=["GET", "POST"])
+def login():
+
+    if request.method == "GET":
+        if session.get('logged_in'):
+            return redirect(url_for('home'))
+        return render_template("login.html")
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
+                        {"username": username, "password": password}).rowcount != 1:
+            return render_template("error.html", message="Your credentials are incorrect. Please try again.")
+        # Log in
+        session['logged_in'] = True
+        session['user_id'] = int(db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchall()[0]["id"])
+        return redirect(url_for('home'))
+
+# -----------------HOME PAGE-----------------
+
+@app.route("/home", methods=["GET", "POST"])
+def home():
 
     if request.method == "GET":
 
@@ -34,7 +58,19 @@ def main_page():
             return render_template("error.html", message="You need to log in to access this page.")
 
         username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchall()[0]["username"]
-        return render_template("main_page.html", username=username)
+        return render_template("home.html", username=username)
+
+# -----------------SEARCH BOOKS-----------------
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+
+    if request.method == "GET":
+
+        if not session.get('logged_in'):
+            return render_template("error.html", message="You need to log in to access this page.")
+
+        return render_template("search.html")
 
     if request.method == "POST":
 
@@ -73,38 +109,19 @@ def register():
 
         # Make sure username is not empty
         if not username:
-            return render_template("error.html", message="Username cannot be empty.")
+            return render_template("error.html", title="Registration error", message="Username cannot be empty.")
 
         # Make sure password is not empty
         if not password:
-            return render_template("error.html", message="Password cannot be empty.")
+            return render_template("error.html", title="Registration error", message="Password cannot be empty.")
 
         # Create username
         db.execute("INSERT INTO users (username, password) VALUES (:username, :password)",
                         {"username": username, "password": password})
         db.commit()
 
-        return render_template("hello.html", username=username, password=password)
+        return render_template("registration_success.html", username=username, password=password)
 
-# -----------------LOGIN-----------------
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-
-    if request.method == "GET":
-        return render_template("login.html")
-
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if db.execute("SELECT * FROM users WHERE username = :username AND password = :password",
-                        {"username": username, "password": password}).rowcount != 1:
-            return render_template("error.html", message="Your credentials are incorrect. Please try again.")
-        # Log in
-        session['logged_in'] = True
-        session['user_id'] = int(db.execute("SELECT * FROM users WHERE username = :username", {"username": username}).fetchall()[0]["id"])
-        return redirect(url_for('main_page'))
 
 # -----------------LOGOUT-----------------
 
@@ -112,4 +129,4 @@ def login():
 def logout():
     session['logged_in'] = False
     session['user_id'] = None
-    return "You were just loged out."
+    return redirect(url_for('login'))

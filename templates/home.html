@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+
+  <p>Welcome {{username}}!</p>
+
+{% endblock %}
+
+
+{% block body %}
+
+<p>To open book search engine click button below.</p>
+
+<p><a href="{{ url_for('search') }}" class="btn btn-warning" role="button">Search books</a></p>
+
+<p>Placeholder for latest reviews</p>
+
+{% endblock %}
