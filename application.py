@@ -21,10 +21,6 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-# @app.route("/")
-# def welcome():
-#     return render_template("welcome.html", message="Welcome. Placeholder for registration/login.")
-
 # -----------------LOGIN-----------------
 
 @app.route("/", methods=["GET", "POST"])
@@ -60,18 +56,6 @@ def home():
         username = db.execute("SELECT username FROM users WHERE id = :id", {"id": session['user_id']}).fetchall()[0]["username"]
         return render_template("home.html", username=username)
 
-# -----------------SEARCH BOOKS-----------------
-
-@app.route("/search", methods=["GET", "POST"])
-def search():
-
-    if request.method == "GET":
-
-        if not session.get('logged_in'):
-            return render_template("error.html", message="You need to log in to access this page.")
-
-        return render_template("search.html")
-
     if request.method == "POST":
 
         isbn = request.form.get("isbn")
@@ -84,11 +68,11 @@ def search():
         author = "%"+author+"%"
 
         # Check if there is at least one search result
-        if db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", {"isbn": isbn}).rowcount == 0:
+        if db.execute("SELECT * FROM books WHERE isbn LIKE :isbn AND title LIKE :title AND author LIKE :author", {"isbn": isbn, "title": title, "author": author}).rowcount == 0:
             return render_template("error.html", message="There is no book that matches your search.")
 
         # Select all search results
-        results = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", {"isbn": isbn}).fetchall()
+        results = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn AND title LIKE :title AND author LIKE :author", {"isbn": isbn, "title": title, "author": author}).fetchall()
         return render_template("search_results.html", results=results)
 
 # -----------------REGISTRATION-----------------

@@ -36,7 +36,7 @@ h2 {
   }
 
   input[type="text"] {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
   input[type="password"] {
@@ -45,5 +45,15 @@ h2 {
 
   p {
     margin-top: 20px;
+  }
+}
+
+.form-row {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  input, .btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }

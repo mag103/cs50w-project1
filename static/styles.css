@@ -31,13 +31,22 @@ h2 {
   padding: 10px;
 }
 .form-signin input[type=text] {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .form-signin input[type=password] {
   margin-bottom: 20px;
 }
 .form-signin p {
   margin-top: 20px;
+}
+
+.form-row {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.form-row input, .form-row .btn {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /*# sourceMappingURL=styles.css.map */
