@@ -9,12 +9,23 @@
 
 {% block body %}
 
-  <ul>
+  <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ISBN</th>
+      <th scope="col">Title</th>
+      <th scope="col">Author</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for result in results %}
-      <li>
-        {{result}}
-      </li>
+      <tr>
+        <td>{{result.isbn}}</td>
+        <td>{{result.title}}</td>
+        <td>{{result.author}}</td>
+      </tr>
     {% endfor %}
-  </ul>
+  </tbody>
+</table>
 
 {% endblock %}

@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
@@ -122,7 +123,6 @@ def register():
 
         return render_template("registration_success.html", username=username, password=password)
 
-
 # -----------------LOGOUT-----------------
 
 @app.route("/logout")
@@ -130,3 +130,10 @@ def logout():
     session['logged_in'] = False
     session['user_id'] = None
     return redirect(url_for('login'))
+
+# -----------------API ACCESS-----------------
+@app.route("/api/<isbn>")
+def api(isbn):
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QMP3DonwQHv1iCptVpVx8g", "isbns": isbn})
+    result = res.json()
+    return render_template("error.html", message=result)
