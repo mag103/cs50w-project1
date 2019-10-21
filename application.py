@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -21,6 +21,8 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+# KEY to Goodreads API
+key = "QMP3DonwQHv1iCptVpVx8g"
 
 # @app.route("/")
 # def welcome():
@@ -134,6 +136,19 @@ def logout():
 # -----------------API ACCESS-----------------
 @app.route("/api/<isbn>")
 def api(isbn):
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QMP3DonwQHv1iCptVpVx8g", "isbns": isbn})
-    result = res.json()
-    return render_template("error.html", message=result)
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
+    reviews_count = res.json()['books'][0]['reviews_count']
+    average_rating = res.json()['books'][0]['average_rating']
+
+    book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+
+    result = jsonify({
+        "title": book_details.title,
+        "author": book_details.author,
+        "year": book_details.year,
+        "isbn": book_details.isbn,
+        "review_count": reviews_count,
+        "average_score": average_rating
+    })
+
+    return result
