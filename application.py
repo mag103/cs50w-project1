@@ -79,15 +79,37 @@ def home():
         return render_template("search_results.html", results=results)
 
 
-@app.route("/book/<isbn>")
+@app.route("/book/<isbn>", methods=["GET", "POST"])
 def book(isbn):
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
-    reviews_count = res.json()['books'][0]['reviews_count']
-    average_rating = res.json()['books'][0]['average_rating']
 
-    book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    if request.method == "GET":
 
-    return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating)
+        if not session.get('logged_in'):
+            return render_template("error.html", message="You need to log in to access this page.")
+
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
+        reviews_count = res.json()['books'][0]['reviews_count']
+        average_rating = res.json()['books'][0]['average_rating']
+
+        book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+
+        return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating)
+
+    if request.method == "POST":
+
+        review_text = request.form.get("review_text")
+        rating = request.form.get("rating")
+
+        user_id = session['user_id']
+
+        db.execute("INSERT INTO reviews (book_id, user_id, rating, review_text) VALUES (:book_id, :user_id, :rating, :review_text)",
+                        {"book_id": isbn, "user_id": user_id, "rating": rating, "review_text": review_text})
+        db.commit()
+
+        text = review_text + str(rating)
+
+        return render_template("error.html", message=text)
+
 
 # -----------------REGISTRATION-----------------
 
@@ -134,6 +156,9 @@ def api(isbn):
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
     reviews_count = res.json()['books'][0]['reviews_count']
     average_rating = res.json()['books'][0]['average_rating']
+
+    if db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).rowcount == 0:
+        return render_template("error.html", title="Error 404", message="Book with this ISBN is not in the database.")
 
     book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
 
