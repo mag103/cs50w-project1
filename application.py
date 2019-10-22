@@ -78,6 +78,17 @@ def home():
         results = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn AND title LIKE :title AND author LIKE :author", {"isbn": isbn, "title": title, "author": author}).fetchall()
         return render_template("search_results.html", results=results)
 
+
+@app.route("/book/<isbn>")
+def book(isbn):
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
+    reviews_count = res.json()['books'][0]['reviews_count']
+    average_rating = res.json()['books'][0]['average_rating']
+
+    book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+
+    return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating)
+
 # -----------------REGISTRATION-----------------
 
 @app.route("/register", methods=["GET", "POST"])

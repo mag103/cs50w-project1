@@ -24,7 +24,7 @@
         <td>{{result.isbn}}</td>
         <td>{{result.title}}</td>
         <td>{{result.author}}</td>
-        <td>See book details</td>
+        <td><a href="{{ url_for('book', isbn=result.isbn) }}">See book details</a></td>
       </tr>
     {% endfor %}
   </tbody>

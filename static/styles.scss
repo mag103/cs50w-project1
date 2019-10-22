@@ -5,7 +5,7 @@ body {
 
 }
 
-h2 {
+h2, h4 {
 
   margin-top: 30px;
   margin-bottom: 30px;
@@ -51,6 +51,7 @@ h2 {
 table {
   max-width: 1200px;
   margin: 0 auto;
+}
 
 .form-row {
   max-width: 1200px;
@@ -61,4 +62,18 @@ table {
     margin-bottom: 10px;
   }
 
+}
+
+.details {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #29a3a3 !important;
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
 }

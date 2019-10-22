@@ -3,7 +3,7 @@ body {
   color: black;
 }
 
-h2 {
+h2, h4 {
   margin-top: 30px;
   margin-bottom: 30px;
 }
@@ -40,7 +40,6 @@ h2 {
   margin-top: 20px;
 }
 
-
 table {
   max-width: 1200px;
   margin: 0 auto;
@@ -54,3 +53,19 @@ table {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.details {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #29a3a3 !important;
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+/*# sourceMappingURL=styles.css.map */
