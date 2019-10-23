@@ -2,7 +2,9 @@
 
 {% block heading %}
 
-    {{book.author}}, {{book.title}}
+    <div class="details">
+      {{book.author}}, {{book.title}}
+    </div>
 
 {% endblock %}
 
@@ -71,33 +73,52 @@
       </div>
     </div>
 
-    <form action="" method="post" class="review-form">
-      <div class="form-group">
-        <div class="row">
-          <label for="exampleFormControlTextarea1">Provide your review here:</label>
-          <textarea class="form-control" id="exampleFormControlTextarea1" name="review_text" rows="3"></textarea>
-        </div>
-        <div class="row">
-          <div class="form-row align-items-center">
-            <div class="col-auto">Your rating: </div>
-            <div class="col-auto">
-              <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Rating</label>
-              <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="rating">
-                <option selected>Choose...</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-            </div>
-            <div class="col">
-              <button type="submit" class="btn btn-warning">Submit</button>
-            </div>
+
+{% if review_exist == 0 %}
+  <form action="" method="post" class="review-form">
+    <div class="form-group">
+      <div class="row">
+        <label for="exampleFormControlTextarea1">Provide your review here:</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" name="review_text" rows="3"></textarea>
+      </div>
+      <div class="row">
+        <div class="form-row align-items-center">
+          <div class="col-auto">Your rating: </div>
+          <div class="col-auto">
+            <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Rating</label>
+            <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="rating">
+              <option selected>Choose...</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="col">
+            <button type="submit" class="btn btn-warning">Submit</button>
           </div>
         </div>
       </div>
-    </form>
+    </div>
+  </form>
+{% else %}
+    <p>You submitted review for this book.</p>
+{% endif %}
 
+
+<div class="reviews">
+  <h4>Book reviews:</h4>
+
+  {{message}}
+
+  {% for review in reviews %}
+    <div class="review">
+      <p><b>User: </b>{{review.username}}</p>
+      <p><b>Rating: </b>{{review.rating}}/5</p>
+      <p><b>Review: </b>{{review.review_text}}</p>
+    </div>
+  {% endfor %}
+</div>
 
 {% endblock %}

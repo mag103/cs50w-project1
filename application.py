@@ -93,7 +93,21 @@ def book(isbn):
 
         book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
 
-        return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating)
+        user_id = session['user_id']
+        username = db.execute("SELECT * FROM users WHERE id = :id", {"id": user_id}).fetchall()[0]["username"]
+        review_exist = 0
+
+        if db.execute("SELECT * FROM reviews WHERE book_id = :book_id", {"book_id": isbn}).rowcount != 0:
+
+            reviews = db.execute("SELECT users.id, username, rating, review_text FROM users INNER JOIN reviews ON reviews.user_id = users.id WHERE book_id = :book_id", {"book_id": isbn}).fetchall()
+
+            for review in reviews:
+                if username == review.username:
+                    review_exist = review_exist + 1
+
+            return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating, reviews=reviews, username=username, review_exist=review_exist)
+
+        return render_template("book.html", book=book_details, reviews_count=reviews_count, average_rating=average_rating, message="There are no reviews for this book yet.", username=username, review_exist=review_exist)
 
     if request.method == "POST":
 

@@ -7,4 +7,4 @@ Must:
     * what's contained in each file
 
 Good to have:
-- remove case sensivity from SQL commands
+- remove case sensitivity from SQL commands
