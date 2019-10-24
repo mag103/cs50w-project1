@@ -1,4 +1,0 @@
-set FLASK_APP=application.py
-set FLASK_DEBUG=1
-set DATABASE_URL=postgres://qofrcvsrtqvnyl:8d03a6645c324b12447b9811538e17df3c57e41f038a5fe8a3a7d56525ce1321@ec2-54-217-234-157.eu-west-1.compute.amazonaws.com:5432/d1n308lu3vge6q
-

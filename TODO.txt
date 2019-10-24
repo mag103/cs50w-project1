@@ -1,7 +1,0 @@
-Must:
-- update README.md
-    * project description
-    * what's contained in each file
-
-Good to have:
-- remove case sensitivity from SQL commands
