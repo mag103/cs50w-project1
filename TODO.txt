@@ -1,7 +1,4 @@
 Must:
-- submitting review on the book page: rate (1-5) + text
-    * users should not be able to submit multiple reviews for the same book
-- see all reviews on the book page
 - update README.md
     * project description
     * what's contained in each file

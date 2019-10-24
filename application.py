@@ -120,9 +120,7 @@ def book(isbn):
                         {"book_id": isbn, "user_id": user_id, "rating": rating, "review_text": review_text})
         db.commit()
 
-        text = review_text + str(rating)
-
-        return render_template("error.html", message=text)
+        return redirect(request.url)
 
 
 # -----------------REGISTRATION-----------------
@@ -167,12 +165,13 @@ def logout():
 # -----------------API ACCESS-----------------
 @app.route("/api/<isbn>")
 def api(isbn):
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
-    reviews_count = res.json()['books'][0]['reviews_count']
-    average_rating = res.json()['books'][0]['average_rating']
 
     if db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).rowcount == 0:
         return render_template("error.html", title="Error 404", message="Book with this ISBN is not in the database.")
+
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn})
+    reviews_count = res.json()['books'][0]['reviews_count']
+    average_rating = res.json()['books'][0]['average_rating']
 
     book_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
 

@@ -87,12 +87,11 @@
           <div class="col-auto">
             <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Rating</label>
             <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="rating">
-              <option selected>Choose...</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
               <option value="5">5</option>
+              <option value="4">4</option>
+              <option value="3">3</option>
+              <option value="2">2</option>
+              <option value="1">1</option>
             </select>
           </div>
           <div class="col">
@@ -103,7 +102,9 @@
     </div>
   </form>
 {% else %}
+  <div class="review-form">
     <p>You submitted review for this book.</p>
+  </div>
 {% endif %}
 
 
